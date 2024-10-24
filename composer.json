@@ -23,11 +23,15 @@
     "require-dev": {
         "larastan/larastan": "^2.0",
         "laravel/pint": "^1.0",
-        "orchestra/testbench": "^9.0 || ^8.0"
+        "orchestra/testbench": "^9.0 || ^8.0",
+        "pestphp/pest": "^3.5"
     },
     "config": {
         "sort-packages": true,
-        "lock": false
+        "lock": false,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     },
     "extra": {
         "laravel": {
@@ -40,6 +44,7 @@
         "lint": "./vendor/bin/pint --test",
         "lint-fix": "./vendor/bin/pint",
         "analyse": "./vendor/bin/phpstan analyse",
+        "test": "./vendor/bin/pest",
         "check": [
             "@lint",
             "@analyse"
