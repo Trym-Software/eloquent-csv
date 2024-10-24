@@ -25,3 +25,5 @@ jobs:
         run: composer lint
       - name: Run PHPStan
         run: composer analyse
+      - name: Run Pest
+        run: composer test -- --coverage
