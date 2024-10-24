@@ -3,7 +3,8 @@ name: Push
 on: [push]
 
 jobs:
-  lint:
+  check:
+    name: Check
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -22,3 +23,5 @@ jobs:
         run: composer install
       - name: Run Pint
         run: composer lint
+      - name: Run PHPStan
+        run: composer analyse

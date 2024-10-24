@@ -9,13 +9,14 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-abstract class CsvModel extends Model
+/** @phpstan-consistent-constructor */
+abstract class CsvModel extends Model implements CsvModelInterface
 {
     protected $connection = 'eloquent_csv';
 
     public $timestamps = false;
 
-    public static function fromCsv(string $filePath): CsvModel
+    public static function fromCsv(string $filePath): CsvModelInterface
     {
         $model = new static;
 
