@@ -1,0 +1,27 @@
+{
+    "name": "trym/eloquent-csv",
+    "description": "Manipulate CSV files using Eloquent",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EloquentCsv\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Luke Spencer",
+            "email": "luke@trym.software"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "ext-sqlite3": "*",
+        "illuminate/database": "^11.0 || ^10.0 || ^9.0",
+        "illuminate/support": "^11.0 || ^10.0 || ^9.0"
+    },
+    "config": {
+        "sort-packages": true,
+        "lock": false
+    }
+}
