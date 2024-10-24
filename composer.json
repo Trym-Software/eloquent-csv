@@ -23,5 +23,12 @@
     "config": {
         "sort-packages": true,
         "lock": false
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "EloquentCsv\\EloquentCsvServiceProvider"
+            ]
+        }
     }
 }

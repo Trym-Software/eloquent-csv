@@ -2,9 +2,10 @@
 
 namespace EloquentCsv;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -13,7 +14,7 @@ abstract class CsvModel extends Model
     protected $connection = 'eloquent_csv';
     public $timestamps = false;
 
-    public static function fromCsv(string $filePath)
+    public static function fromCsv(string $filePath): CsvModel
     {
         $model = new static;
 
@@ -21,17 +22,28 @@ abstract class CsvModel extends Model
         $lines = explode(PHP_EOL, $csv);
         $header = collect(str_getcsv(array_shift($lines)));
 
-        self::createTable($model, $header);
+        Schema::connection($model->getConnectionName())->dropIfExists($model->getTable());
+        Schema::connection($model->getConnectionName())
+            ->create($model->getTable(), function (Blueprint $table) use ($header) {
+                $table->id();
+                foreach ($header as $column) {
+                    $table->string($column)->nullable();
+                }
+            });
 
         $rows = collect($lines)->filter();
         $data = $rows->map(fn($row) => $header->combine(str_getcsv($row)));
 
-        self::insert($model, $data);
+        foreach ($data as $row) {
+            DB::connection($model->getConnectionName())
+                ->table($model->getTable())
+                ->insert($row->toArray());
+        }
 
         return $model;
     }
 
-    public static function toCsv($filename, Collection $collection)
+    public static function toCsv(string $filename, EloquentCollection $collection): EloquentCollection
     {
         $file = fopen($filename, 'w');
 
@@ -44,9 +56,11 @@ abstract class CsvModel extends Model
         };
 
         fclose($file);
+
+        return $collection;
     }
 
-    public static function getColumns()
+    public static function getColumns(): Collection
     {
         $model = new static;
 
@@ -56,51 +70,19 @@ abstract class CsvModel extends Model
         return $columns;
     }
 
-    public static function addColumn($columnName, $after = null)
+    public static function addColumn(string $columnName): CsvModel
     {
         $model = new static;
 
-        $columns = self::getColumns();
-
-        if (! $after || ! $columns->contains($after)) {
-            Schema::connection($model->getConnectionName())
-                ->table($model->getTable(), function (Blueprint $table) use ($columnName) {
-                    $table->string($columnName)->nullable();
-                });
-
-            return $model;
-        }
-
-        $newColumns = $columns;
-        $newColumns->splice($columns->search($after) + 1, 0, $columnName);
-
-        return self::reorderColumns($newColumns);
-    }
-
-    public static function reorderColumns($newColumns)
-    {
-        $model = new static;
-
-        $columns = self::getColumns();
-
-        Schema::connection($model->getConnectionName())->rename($model->getTable(), $model->getTable().'_temp_rename');
-
-        self::createTable($model, $newColumns);
-
-        DB::connection($model->getConnectionName())
-            ->table($model->getTable())->insertUsing(
-                $columns->all(),
-                DB::connection($model->getConnectionName())
-                    ->table($model->getTable().'_temp_rename')
-                    ->select($columns->all())
-            );
-
-        Schema::connection($model->getConnectionName())->dropIfExists($model->getTable().'_temp_rename');
+        Schema::connection($model->getConnectionName())
+            ->table($model->getTable(), function (Blueprint $table) use ($columnName) {
+                $table->string($columnName)->nullable();
+            });
 
         return $model;
     }
 
-    public static function dropColumn(array | string $columnNames)
+    public static function dropColumn(array | string $columnNames): CsvModel
     {
         $model = new static;
 
@@ -116,26 +98,5 @@ abstract class CsvModel extends Model
             });
 
         return $model;
-    }
-
-    private static function insert($model, $data)
-    {
-        $data->each(function ($row) use ($model) {
-            DB::connection($model->getConnectionName())
-                ->table($model->getTable())
-                ->insert($row->toArray());
-        });
-    }
-
-    private static function createTable($model, $header)
-    {
-        Schema::connection($model->getConnectionName())->dropIfExists($model->getTable());
-        Schema::connection($model->getConnectionName())
-            ->create($model->getTable(), function (Blueprint $table) use ($header) {
-                $table->id();
-                foreach ($header as $column) {
-                    $table->string($column)->nullable();
-                }
-            });
     }
 }
