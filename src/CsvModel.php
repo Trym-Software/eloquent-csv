@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Schema;
 abstract class CsvModel extends Model
 {
     protected $connection = 'eloquent_csv';
+
     public $timestamps = false;
 
     public static function fromCsv(string $filePath): CsvModel
@@ -32,7 +33,7 @@ abstract class CsvModel extends Model
             });
 
         $rows = collect($lines)->filter();
-        $data = $rows->map(fn($row) => $header->combine(str_getcsv($row)));
+        $data = $rows->map(fn ($row) => $header->combine(str_getcsv($row)));
 
         foreach ($data as $row) {
             DB::connection($model->getConnectionName())
@@ -52,8 +53,8 @@ abstract class CsvModel extends Model
         fputcsv($file, collect($model->toArray())->except($keyName)->keys()->all());
 
         foreach ($collection as $model) {
-            fputcsv($file,  collect($model->toArray())->except($keyName)->all());
-        };
+            fputcsv($file, collect($model->toArray())->except($keyName)->all());
+        }
 
         fclose($file);
 
@@ -82,7 +83,7 @@ abstract class CsvModel extends Model
         return $model;
     }
 
-    public static function dropColumn(array | string $columnNames): CsvModel
+    public static function dropColumn(array|string $columnNames): CsvModel
     {
         $model = new static;
 

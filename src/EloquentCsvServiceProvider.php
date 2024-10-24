@@ -2,10 +2,9 @@
 
 namespace EloquentCsv;
 
-use EloquentCsv\CsvModel;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\ServiceProvider;
 
 class EloquentCsvServiceProvider extends ServiceProvider
 {
@@ -16,6 +15,6 @@ class EloquentCsvServiceProvider extends ServiceProvider
             'database' => ':memory:',
         ]);
 
-        Collection::macro('toCsv', fn($filename) => CsvModel::toCsv($filename, $this));
+        Collection::macro('toCsv', fn ($filename) => CsvModel::toCsv($filename, $this));
     }
 }
