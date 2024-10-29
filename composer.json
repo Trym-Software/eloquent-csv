@@ -44,10 +44,11 @@
         "lint": "./vendor/bin/pint --test",
         "lint-fix": "./vendor/bin/pint",
         "analyse": "./vendor/bin/phpstan analyse",
-        "test": "./vendor/bin/pest",
+        "test": "./vendor/bin/pest --coverage",
         "check": [
             "@lint",
-            "@analyse"
+            "@analyse",
+            "@test"
         ]
     }
 }

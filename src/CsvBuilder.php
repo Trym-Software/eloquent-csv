@@ -6,16 +6,17 @@ use Illuminate\Support\Collection;
 
 class CsvBuilder
 {
-    public function read($filename): Collection
+    public function read(string $filename): Collection
     {
         $csv = file_get_contents($filename);
         $lines = explode(PHP_EOL, $csv);
         $header = collect(str_getcsv(array_shift($lines)));
         $rows = collect($lines)->filter();
+
         return $rows->map(fn ($row) => $header->combine(str_getcsv($row)));
     }
 
-    public function write($filename, Collection $rows): void
+    public function write(string $filename, Collection $rows): void
     {
         $file = fopen($filename, 'w');
 

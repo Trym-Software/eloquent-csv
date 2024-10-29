@@ -11,7 +11,7 @@ class EloquentCsvServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind('csv', fn() => new CsvBuilder);
+        $this->app->bind('csv', fn () => new CsvBuilder);
     }
 
     public function boot(): void

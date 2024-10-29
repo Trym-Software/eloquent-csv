@@ -3,7 +3,6 @@
 namespace EloquentCsv;
 
 use EloquentCsv\Facades\CSV;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
@@ -19,18 +18,18 @@ abstract class CsvModel extends Model implements CsvModelInterface
 
     public $timestamps = false;
 
-    public static function fromCsv(string $file): CsvModelInterface
+    public static function fromCsv(string $filename): CsvModelInterface
     {
-        $rows = CSV::read($file);
+        $rows = CSV::read($filename);
         $headers = $rows->first()->keys();
 
         $model = new static;
         $schema = Schema::connection($model->getConnectionName());
         $schema->dropIfExists($model->getTable());
         $schema->create($model->getTable(), function (Blueprint $table) use ($headers) {
-                $table->id();
-                $headers->each(fn ($header) => $table->string($header)->nullable());
-            });
+            $table->id();
+            $headers->each(fn ($header) => $table->string($header)->nullable());
+        });
 
         foreach ($rows as $row) {
             DB::connection($model->getConnectionName())
