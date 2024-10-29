@@ -25,8 +25,9 @@ abstract class CsvModel extends Model implements CsvModelInterface
         $headers = $rows->first()->keys();
 
         $model = new static;
-        Schema::connection($model->getConnectionName())->dropIfExists($model->getTable())
-            ->create($model->getTable(), function (Blueprint $table) use ($headers) {
+        $schema = Schema::connection($model->getConnectionName());
+        $schema->dropIfExists($model->getTable());
+        $schema->create($model->getTable(), function (Blueprint $table) use ($headers) {
                 $table->id();
                 $headers->each(fn ($header) => $table->string($header)->nullable());
             });
@@ -39,23 +40,6 @@ abstract class CsvModel extends Model implements CsvModelInterface
 
         return $model;
     }
-
-    // public static function toCsv(string $filename, EloquentCollection $collection): EloquentCollection
-    // {
-    //     $file = fopen($filename, 'w');
-
-    //     $model = $collection->first();
-    //     $keyName = $model->getKeyName();
-    //     fputcsv($file, collect($model->toArray())->except($keyName)->keys()->all());
-
-    //     foreach ($collection as $model) {
-    //         fputcsv($file, collect($model->toArray())->except($keyName)->all());
-    //     }
-
-    //     fclose($file);
-
-    //     return $collection;
-    // }
 
     public static function getColumns(): Collection
     {
