@@ -8,6 +8,11 @@ use Illuminate\Support\ServiceProvider;
 
 class EloquentCsvServiceProvider extends ServiceProvider
 {
+    public function register(): void
+    {
+        $this->app->bind('csv', fn() => new Csv);
+    }
+
     public function boot(): void
     {
         Config::set('database.connections.eloquent_csv', [
@@ -15,6 +20,6 @@ class EloquentCsvServiceProvider extends ServiceProvider
             'database' => ':memory:',
         ]);
 
-        Collection::macro('toCsv', fn ($filename) => CsvModel::toCsv($filename, $this));
+        Collection::macro('toCsv', fn ($filename) => CSV::write($filename, $this));
     }
 }

@@ -1,7 +1,8 @@
 <?php
 
-namespace EloquentCsv;
+namespace EloquentCsv\Model;
 
+use EloquentCsv\Facades\CSV;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,29 +15,23 @@ abstract class CsvModel extends Model implements CsvModelInterface
 {
     protected $connection = 'eloquent_csv';
 
+    protected $hidden = ['id'];
+
     public $timestamps = false;
 
-    public static function fromCsv(string $filePath): CsvModelInterface
+    public static function fromCsv(string $file): CsvModelInterface
     {
+        $rows = CSV::read($file);
+        $headers = $rows->first()->keys();
+
         $model = new static;
-
-        $csv = file_get_contents($filePath);
-        $lines = explode(PHP_EOL, $csv);
-        $header = collect(str_getcsv(array_shift($lines)));
-
-        Schema::connection($model->getConnectionName())->dropIfExists($model->getTable());
-        Schema::connection($model->getConnectionName())
-            ->create($model->getTable(), function (Blueprint $table) use ($header) {
+        Schema::connection($model->getConnectionName())->dropIfExists($model->getTable())
+            ->create($model->getTable(), function (Blueprint $table) use ($headers) {
                 $table->id();
-                foreach ($header as $column) {
-                    $table->string($column)->nullable();
-                }
+                $headers->each(fn ($header) => $table->string($header)->nullable());
             });
 
-        $rows = collect($lines)->filter();
-        $data = $rows->map(fn ($row) => $header->combine(str_getcsv($row)));
-
-        foreach ($data as $row) {
+        foreach ($rows as $row) {
             DB::connection($model->getConnectionName())
                 ->table($model->getTable())
                 ->insert($row->toArray());
@@ -45,22 +40,22 @@ abstract class CsvModel extends Model implements CsvModelInterface
         return $model;
     }
 
-    public static function toCsv(string $filename, EloquentCollection $collection): EloquentCollection
-    {
-        $file = fopen($filename, 'w');
+    // public static function toCsv(string $filename, EloquentCollection $collection): EloquentCollection
+    // {
+    //     $file = fopen($filename, 'w');
 
-        $model = $collection->first();
-        $keyName = $model->getKeyName();
-        fputcsv($file, collect($model->toArray())->except($keyName)->keys()->all());
+    //     $model = $collection->first();
+    //     $keyName = $model->getKeyName();
+    //     fputcsv($file, collect($model->toArray())->except($keyName)->keys()->all());
 
-        foreach ($collection as $model) {
-            fputcsv($file, collect($model->toArray())->except($keyName)->all());
-        }
+    //     foreach ($collection as $model) {
+    //         fputcsv($file, collect($model->toArray())->except($keyName)->all());
+    //     }
 
-        fclose($file);
+    //     fclose($file);
 
-        return $collection;
-    }
+    //     return $collection;
+    // }
 
     public static function getColumns(): Collection
     {
