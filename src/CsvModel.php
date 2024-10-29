@@ -1,6 +1,6 @@
 <?php
 
-namespace EloquentCsv\Model;
+namespace EloquentCsv;
 
 use EloquentCsv\Facades\CSV;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
