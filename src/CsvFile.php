@@ -4,7 +4,7 @@ namespace EloquentCsv;
 
 use Illuminate\Support\Collection;
 
-class CsvBuilder
+class CsvFile
 {
     public function read(string $filename): Collection
     {
