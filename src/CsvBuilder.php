@@ -8,7 +8,7 @@ class CsvBuilder
 {
     public function read($filename): Collection
     {
-        $csv = file_get_contents($filePath);
+        $csv = file_get_contents($filename);
         $lines = explode(PHP_EOL, $csv);
         $header = collect(str_getcsv(array_shift($lines)));
         $rows = collect($lines)->filter();
