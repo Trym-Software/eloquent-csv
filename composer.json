@@ -8,6 +8,11 @@
             "EloquentCsv\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "EloquentCsv\\Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Luke Spencer",
@@ -17,6 +22,7 @@
     "minimum-stability": "stable",
     "require": {
         "ext-sqlite3": "*",
+        "calebporzio/sushi": "^2.5",
         "illuminate/database": "^11.0 || ^10.0 || ^9.0",
         "illuminate/support": "^11.0 || ^10.0 || ^9.0"
     },
@@ -44,10 +50,11 @@
         "lint": "./vendor/bin/pint --test",
         "lint-fix": "./vendor/bin/pint",
         "analyse": "./vendor/bin/phpstan analyse",
-        "test": "./vendor/bin/pest",
+        "test": "./vendor/bin/pest --coverage --min=100",
         "check": [
             "@lint",
-            "@analyse"
+            "@analyse",
+            "@test"
         ]
     }
 }
