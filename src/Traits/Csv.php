@@ -9,8 +9,6 @@ trait Csv
 {
     use Sushi;
 
-    public $csvFile;
-
     public function csvFile()
     {
         return storage_path($this->csvFile);
