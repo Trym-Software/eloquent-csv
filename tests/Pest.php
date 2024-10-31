@@ -11,7 +11,7 @@
 |
 */
 
-// pest()->extend(Tests\TestCase::class)->in('Feature');
+pest()->extend(EloquentCsv\Tests\TestCase::class)->in('Feature');
 
 /*
 |--------------------------------------------------------------------------

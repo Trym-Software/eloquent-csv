@@ -1,10 +1,18 @@
 <?php
 
-namespace Tests;
+namespace EloquentCsv\Tests;
 
-use PHPUnit\Framework\TestCase as BaseTestCase;
-
-abstract class TestCase extends BaseTestCase
+abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
-    //
+    protected function getPackageProviders($app)
+    {
+        return [
+            'EloquentCsv\EloquentCsvServiceProvider',
+        ];
+    }
+
+    protected function defineEnvironment($app)
+    {
+        $app->useStoragePath(realpath(__DIR__.'/storage'));
+    }
 }

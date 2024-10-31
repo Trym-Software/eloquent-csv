@@ -9,11 +9,11 @@ class CsvFile
     public function read(
         string $filename,
         string $separator = ',',
-        string $enclosure = "\"",
-        string $escape = "",
-    ): Collection{
+        string $enclosure = '"',
+        string $escape = '',
+    ): Collection {
         $rows = collect();
-        if (($file = fopen($filename, "r")) !== false) {
+        if (($file = fopen($filename, 'r')) !== false) {
             while (($data = fgetcsv($file, null, $separator, $enclosure, $escape)) !== false) {
                 $rows[] = $data;
             }
@@ -29,8 +29,8 @@ class CsvFile
         string $filename,
         Collection $rows,
         string $separator = ',',
-        string $enclosure = "\"",
-        string $escape = "",
+        string $enclosure = '"',
+        string $escape = '',
         string $eol = "\n"
     ): void {
         $file = fopen($filename, 'w');
