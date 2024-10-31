@@ -28,6 +28,8 @@ class Customer extends Model
 Specify the CSV file on the public `$csvFile` property. The file path should be relative to the Laravel storage folder path.
 
 ```php
+use EloquentCsv\Traits\Csv;
+
 class Customer extends Model
 {
     use Csv;
@@ -39,6 +41,8 @@ class Customer extends Model
 If you need a custom path you can use the `csvFile()` method instead.
 
 ```php
+use EloquentCsv\Traits\Csv;
+
 class Customer extends Model
 {
     use Csv;
@@ -54,6 +58,21 @@ The header from the CSV file will automatically be converted into attributes on 
 
 ```php
 
-use App\
+use App\Models\Customer;
 
+// Get all customers
+$customers = Customer::all();
+
+// Get name and email of customers where the email is john@email.com
+$customers = Customer::select(['name', 'email'])->where('email', 'john@email.com')->get();
+```
+
+## Collection to CSV
+
+Once you have a collection of records you can write them to a CSV file by using the `toCsv()` method.
+
+```php
+$customers = Customer::all();
+
+$customers->toCsv(storage_path('customers.copy.csv'));
 ```
