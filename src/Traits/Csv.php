@@ -19,10 +19,8 @@ trait Csv
         return Facade::read($this->csvFile())->toArray() ?? [];
     }
 
-    protected static function booted(): void
+    protected function initializeCsv()
     {
-        static::addGlobalScope('remove-id', function (Builder $builder) {
-            $builder->setHidden('id');
-        });
+        $this->makeHidden('id');
     }
 }
