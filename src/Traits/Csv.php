@@ -13,7 +13,7 @@ trait Csv
 
     public function csvFile()
     {
-        return $this->csvFile;
+        return storage_path($this->csvFile);
     }
 
     public function getRows()
