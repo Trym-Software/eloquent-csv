@@ -53,7 +53,7 @@
         "lint": "./vendor/bin/pint --test",
         "lint-fix": "./vendor/bin/pint",
         "analyse": "./vendor/bin/phpstan analyse",
-        "test": "./vendor/bin/pest --coverage",
+        "test": "./vendor/bin/pest --coverage --min=100",
         "check": [
             "@lint",
             "@analyse",
