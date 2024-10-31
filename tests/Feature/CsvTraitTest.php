@@ -5,6 +5,7 @@ use EloquentCsv\Tests\Feature\Models\Customer;
 test('customer model reads and outputs to csv', function () {
     Storage::fake('test');
 
+    Customer::query()->update(['Test Column' => 'test']);
     $customers = Customer::all();
     $customers->toCsv(Storage::disk('test')->path('customer-10-output.csv'));
 
