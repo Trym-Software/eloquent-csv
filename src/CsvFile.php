@@ -20,9 +20,9 @@ class CsvFile
             fclose($file);
         }
 
-        $header = $rows->shift();
+        $header = collect($rows->shift());
 
-        return $rows->filter()->map(fn ($row) => $header->combine($row));
+        return $rows->filter()->map(fn ($row) => $header->combine($row)->all());
     }
 
     public function write(
